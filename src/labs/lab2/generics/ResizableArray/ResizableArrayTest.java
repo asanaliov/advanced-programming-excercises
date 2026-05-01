@@ -1,37 +1,23 @@
 package labs.lab2.generics.ResizableArray;
 
-import java.util.LinkedList;
 import java.util.Scanner;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.LinkedList;
 
-//class ArrayIndexOutOfBoundsException extends Exception {
-//    public ArrayIndexOutOfBoundsException() {
-//        super();
-//    }
-//
-//    public ArrayIndexOutOfBoundsException(String message) {
-//        System.out.println(message);
-//    }
-//}
+import java.util.Arrays;
 
 class ResizableArray<T> {
     private T[] elements;
-    private int size = 0;
-    private static final int defaultInitialCapacity = 10;
+    private int size;
 
     @SuppressWarnings("unchecked")
     public ResizableArray() {
-        this.elements = (T[]) new Object[defaultInitialCapacity];
-        size = 0;
+        this.elements = (T[]) new Object[10];
+        this.size = 0;
     }
 
-    @SuppressWarnings("unchecked")
     public void addElement(T element) {
         if (size == elements.length) {
-            T[] newArr = (T[]) new Object[elements.length * 2];
-            System.arraycopy(elements, 0, newArr, 0, size);
-            elements = newArr;
+            elements = Arrays.copyOf(elements, elements.length * 2);
         }
         elements[size++] = element;
     }
@@ -42,8 +28,12 @@ class ResizableArray<T> {
                 for (int j = i; j < size - 1; j++) {
                     elements[j] = elements[j + 1];
                 }
-                elements[size - 1] = null;
-                size--;
+                elements[--size] = null; // Помош за Garbage Collector
+
+                // Намалување на капацитет ако има многу празно место (на пример 1/4 полна)
+                if (size < elements.length / 4 && elements.length > 10) {
+                    elements = Arrays.copyOf(elements, elements.length / 2);
+                }
                 return true;
             }
         }
@@ -52,18 +42,13 @@ class ResizableArray<T> {
 
     public boolean contains(T element) {
         for (int i = 0; i < size; i++) {
-            if (elements[i].equals(element)) {
-                return true;
-            }
+            if (elements[i].equals(element)) return true;
         }
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     public Object[] toArray() {
-        Object[] newArray = new Object[size];
-        System.arraycopy(elements, 0, newArray, 0, size);
-        return newArray;
+        return Arrays.copyOf(elements, size);
     }
 
     public boolean isEmpty() {
@@ -74,114 +59,61 @@ class ResizableArray<T> {
         return size;
     }
 
-    public T elementAt(int index) throws ArrayIndexOutOfBoundsException {
-        if (index < 0 || index >= size)
-            throw new ArrayIndexOutOfBoundsException("Array index out of bounds");
-        return elements[index];
-    }
-
-
-    @SuppressWarnings("unchecked")
-    public static <T> void copyAll(ResizableArray<? super T> dest, ResizableArray<? extends T> src) {
-        int n = src.count();
-        Object[] temp = src.toArray();
-        for (int i = 0; i < n; i++) {
-            dest.addElement((T) temp[i]);
+    public T elementAt(int idx) {
+        if (idx < 0 || idx >= size) {
+            throw new ArrayIndexOutOfBoundsException(idx);
         }
+        return elements[idx];
     }
 
-    public T[] getElements() {
-        return elements;
-    }
-
-    public int getSize() {
-        return size;
+    public static <T> void copyAll(ResizableArray<? super T> dest, ResizableArray<? extends T> src) {
+        for (int i = 0; i < src.count(); i++) {
+            dest.addElement(src.elementAt(i));
+        }
     }
 }
-
 class IntegerArray extends ResizableArray<Integer> {
+
     public double sum() {
-        double sum = 0;
-        for (int i = 0; i < getSize(); i++) {
-            try {
-                sum += elementAt(i);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new RuntimeException();
-            }
+        double s = 0;
+        for (int i = 0; i < count(); i++) {
+            s += elementAt(i);
         }
-        return sum;
+        return s;
     }
 
     public double mean() {
-        return sum() / getSize();
+        if (count() == 0) return 0;
+        return sum() / count();
     }
 
-    int countNonZero() {
-        int counter = 0;
-        for (int i = 0; i < getSize(); i++) {
-            try {
-                if (!elementAt(i).equals(0)) {
-                    counter++;
-                }
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new RuntimeException(e);
-            }
+    public int countNonZero() {
+        int nonZero = 0;
+        for (int i = 0; i < count(); i++) {
+            if (elementAt(i) != 0) nonZero++;
         }
-        return counter;
+        return nonZero;
     }
 
     public IntegerArray distinct() {
-        IntegerArray newArray = new IntegerArray();
-        for (int i = 0; i < getSize(); i++) {
-            try {
-                Integer e = elementAt(i);
-                if (!newArray.contains(e)) {
-                    newArray.addElement(e);
-                }
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                throw new RuntimeException(ex);
+        IntegerArray result = new IntegerArray();
+        for (int i = 0; i < count(); i++) {
+            Integer current = elementAt(i);
+            if (!result.contains(current)) {
+                result.addElement(current);
             }
         }
-        return newArray;
+        return result;
     }
 
     public IntegerArray increment(int offset) {
-        IntegerArray newArray = new IntegerArray();
-        for (int i = 0; i < getSize(); i++) {
-            try {
-                Integer e = elementAt(i);
-                e += offset;
-                newArray.addElement(e);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new RuntimeException();
-            }
+        IntegerArray result = new IntegerArray();
+        for (int i = 0; i < count(); i++) {
+            result.addElement(elementAt(i) + offset);
         }
-        return newArray;
+        return result;
     }
-
-    // dopolnitelno baranje labs
-    public class ArrayTransformer<T, R> {
-        public  ResizableArray<R> map(ResizableArray<T> source, Function<? super T,? extends R> mapper) {
-            ResizableArray<R> out = new ResizableArray<>();
-            for (int i = 0; i < source.getSize(); i++) {
-                out.addElement(mapper.apply(source.elementAt(i)));
-            }
-            return out;
-        }
-
-        public static <T> ResizableArray <T> filter(ResizableArray<? extends T> source, Predicate<? super T> predicate){
-            ResizableArray<T> out = new ResizableArray<>();
-            for (int i = 0; i < source.getSize(); i++) {
-                if(predicate.test(source.elementAt(i))){
-                    out.addElement(source.elementAt(i));
-                }
-            }
-            return out;
-        }       
-    }
-
 }
-
 public class ResizableArrayTest {
 
     public static void main(String[] args) {
@@ -301,4 +233,3 @@ public class ResizableArrayTest {
     }
 
 }
-

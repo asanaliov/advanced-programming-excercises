@@ -53,7 +53,6 @@ class XMLComposite implements XMLComponent {
     public void print(int indent) {
         String indentation = "    ".repeat(indent);
         StringBuilder sb = new StringBuilder();
-
         sb.append(indentation).append("<").append(tag);
         attributes.forEach((a, v) -> sb.append(String.format(" %s=\"%s\"", a, v)));
         sb.append(">");

@@ -1,6 +1,5 @@
 package labs.lab9.lab91;
 
-import javax.swing.text.Document;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;

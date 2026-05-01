@@ -31,7 +31,6 @@ class FreeFormStrategy implements QuestionStrategy {
     public void displayQuestion(String questionText) {
         System.out.println(questionText);
     }
-
     @Override
     public boolean isCorrect(String userAnswer, String correctAnswer) {
         if (userAnswer.isEmpty()) return false;
