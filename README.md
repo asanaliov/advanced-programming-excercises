@@ -1,2 +1,2 @@
 # AP_EXCERCISES
-Codes from the advanced programming course
+Code from the advanced programming course
