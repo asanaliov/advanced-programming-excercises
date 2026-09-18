@@ -66,12 +66,12 @@ enum Genre {
 // ==================== MOVIE CLASS ====================
 
 class Movie implements Comparable<Movie> {
-    private String id;
-    private String title;
-    private Genre genre;
-    private int duration;
-    private int releaseYear;
-    private double rating;
+    private final String id;
+    private final String title;
+    private final Genre genre;
+    private final int duration;
+    private final int releaseYear;
+    private final double rating;
 
     public Movie(String id, String title, Genre genre, int duration, int releaseYear, double rating) {
         this.id = id;
@@ -136,10 +136,10 @@ class Movie implements Comparable<Movie> {
 // ==================== WATCH EVENT ====================
 
 class WatchEvent {
-    private String userId;
-    private String movieId;
-    private LocalDateTime timestamp;
-    private Quality quality;
+    private final String userId;
+    private final String movieId;
+    private final LocalDateTime timestamp;
+    private final Quality quality;
 
     public WatchEvent(String userId, String movieId, Quality quality) {
         this.userId = userId;
@@ -251,7 +251,7 @@ class FreeUser extends User {
 }
 
 class PremiumUser extends User {
-    private LocalDateTime subscriptionDate;
+    private final LocalDateTime subscriptionDate;
 
     public PremiumUser(String id, String email, String name, LocalDateTime subscriptionDate) {
         super(id, email, name);
@@ -291,9 +291,9 @@ class UserFactory {
 // ==================== STREAMING PLATFORM ====================
 
 class StreamingPlatform {
-    private Map<String, Movie> movies;
-    private Map<String, User> users;
-    private List<WatchEvent> watchEvents;
+    private final Map<String, Movie> movies;
+    private final Map<String, User> users;
+    private final List<WatchEvent> watchEvents;
 
     public StreamingPlatform() {
         this.movies = new HashMap<>();
@@ -608,4 +608,5 @@ public class StreamingPlatformTest {
         Map<Integer, Long> statsByYear = platform.getWatchStatsByYear();
         statsByYear.forEach((year, count) -> System.out.println(year + " -> " + count + " watches"));
     }
+
 }

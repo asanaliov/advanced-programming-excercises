@@ -1,4 +1,4 @@
-package vtor_kolokvium.bucket;
+package vtor_kolokvium_2026.bucket;
 
 import java.util.*;
 

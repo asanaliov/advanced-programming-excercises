@@ -1,4 +1,4 @@
-package vtor_kolokvium.stats;
+package vtor_kolokvium_2026.stats;
 
 import java.util.*;
 import java.util.concurrent.*;

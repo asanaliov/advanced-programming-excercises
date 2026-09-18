@@ -1,4 +1,4 @@
-package vtor_kolokvium.news;
+package vtor_kolokvium_2026.news;
 
 import java.time.LocalDateTime;
 import java.util.*;
